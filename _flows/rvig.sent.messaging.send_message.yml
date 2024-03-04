@@ -2,7 +2,7 @@ id: send_message
 namespace: rvig.sent.messaging
 
 variables:
-  host: host.docker.internal
+  host: rabbitmq
 
 inputs:
   - name: instantie_van

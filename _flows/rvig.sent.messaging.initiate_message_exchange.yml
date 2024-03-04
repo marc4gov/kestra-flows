@@ -2,7 +2,7 @@ id: initiate_message_exchange
 namespace: rvig.sent.messaging
 
 variables:
-  host: host.docker.internal
+  host: rabbitmq
 
 inputs:
   - name: context
