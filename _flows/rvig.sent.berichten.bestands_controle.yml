@@ -1,0 +1,28 @@
+id: bestands_controle
+namespace: rvig.sent.berichten
+
+variables:
+  host: https://marc4gov.pythonanywhere.com/
+
+tasks:
+  - id: start
+    type: io.kestra.core.tasks.log.Log
+    message: Start bestandscontrole
+  - id: doe_bestandscontrole
+    type: io.kestra.plugin.fs.http.Request
+    uri: '{{vars.host}}initiatie/controle_ok'
+  - id: check_bestand
+    type: io.kestra.core.tasks.log.Log
+    message: Resultaat is {{outputs.doe_bestandscontrole.body | jq('.bericht') | first }}
+
+  - id: commit_and_push
+    type: io.kestra.plugin.git.Push
+    namespaceFiles:
+      enabled: true
+    flows:
+      enabled: true
+    url: https://github.com/marc4gov/kestra-flows
+    branch: master
+    username: marc4gov
+    password: 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
+    commitMessage: "add flow {{ flow.id }} at {{ now() }}"

@@ -1,0 +1,39 @@
+id: maak_bericht
+namespace: rvig.sent.berichten
+
+variables:
+  berichten: {
+    "Ii01": ["If01", "Ib01", "If21", "Iv01", "If31", "Null"],
+    "Ri01": ["Rf01", "Rb01", "Rv01", "Rf31", "Null"],
+    "Ji01": ["Jf01", "Jb01", "Jf21", "Jv01", "Jf31", "Null"],
+    "Tb01": ["Tf01", "Tf11", "Tv01", "Null"],
+    "Tb02": ["Tf21", "Null"],
+    "Iv11": ["If41", "Iv21"],
+    "Wa01": ["Wf01", "Null"],
+    "Og11": ["Of11", "Null"],
+    "Lg01": [],
+    "Lq01": ["Lf01", "La01"],    
+  }
+
+inputs:
+  - name: bericht
+    type: STRING
+    required: true
+    defaults: "Ji01"
+
+tasks:
+  - id: start
+    type: io.kestra.core.tasks.log.Log
+    message: Start maak bericht
+  - id: maak_bericht
+    type: io.kestra.plugin.scripts.python.Script
+    docker:
+      image: ghcr.io/kestra-io/pydata:latest
+      pullPolicy: NEVER
+    script: |
+      import random
+      from kestra import Kestra
+      Kestra.outputs({"bericht": random.choice({{vars.berichten}}["{{inputs.bericht}}"])})
+  - id: einde
+    type: io.kestra.core.tasks.log.Log
+    message: Einde maak bericht
