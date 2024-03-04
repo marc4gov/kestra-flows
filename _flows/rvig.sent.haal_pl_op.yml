@@ -1,0 +1,24 @@
+id: haal_pl_op
+namespace: rvig.sent
+
+variables:
+  uri: "mongodb+srv://marcminnee:yhu5XiffBrNtLXfi@clustersent.unkit4h.mongodb.net/"
+  type_bericht: Ii01
+  database: sent
+  collection: pl_lap2
+  PLnummer: "009"
+
+tasks:
+  - id: haal_pl
+    type: "io.kestra.plugin.mongodb.Find"
+    connection:
+      uri: "{{vars.uri}}"
+    database: "{{vars.database}}"
+    collection: "{{vars.collection}}"
+    filter:
+      PLnummer: "{{vars.PLnummer}}"
+
+triggers:
+  - id: webhook
+    type: io.kestra.core.models.triggers.types.Webhook
+    key: test1234

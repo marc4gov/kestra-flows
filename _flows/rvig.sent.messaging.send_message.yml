@@ -1,0 +1,34 @@
+id: send_message
+namespace: rvig.sent.messaging
+
+variables:
+  host: host.docker.internal
+
+inputs:
+  - name: instantie_van
+    type: STRING
+    defaults: "1810"
+    required: false
+  - name: instantie_naar
+    type: STRING
+    defaults: "1811"
+    required: false
+  - name: bericht
+    type: JSON
+    defaults: '{"PLnummer": "001", "context": "bijhouden", "code": "Ii01"}'
+    required: false
+
+tasks:
+  - id: publish
+    type: io.kestra.plugin.amqp.Publish
+    url: amqp://guest:guest@{{vars.host}}:5672/{{inputs.bericht.context}}
+    exchange: kestramqp.exchange.{{inputs.bericht.context}}
+    serdeType: JSON
+    from:
+    - data: 
+        PLnummer: '{{ inputs.bericht.PLnummer }}'
+        activiteit: '{{ inputs.bericht.context}}'
+        bericht_code: '{{ inputs.bericht.code }}'
+        instantie_van_initiatie: '{{ inputs.instantie_van }}'
+        instantie_van_opvolging: '{{ inputs.instantie_naar}}'
+        timestamp: '{{ now() }}'

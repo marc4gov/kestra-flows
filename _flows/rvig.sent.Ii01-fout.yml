@@ -1,0 +1,46 @@
+id: Ii01-fout
+namespace: rvig.sent
+
+variables:
+  host: host.docker.internal
+  antwoord: NIET_AANWEZIG
+  gevonden: MINISTERIEEL_BESLUIT
+
+tasks:
+  - id: stuur_antwoord
+    type: io.kestra.core.tasks.flows.Switch
+    value: "{{ vars.antwoord}}"
+    cases: 
+      NIET_UNIEK:
+        - id: niet_uniek
+          type: io.kestra.core.tasks.log.Log
+          message: Niet uniek
+      NIET_AANWEZIG:
+        - id: niet_aanwezig
+          type: io.kestra.core.tasks.log.Log
+          message: Niet aanwezig
+    defaults:
+      - id: gevonden
+        type: io.kestra.core.tasks.flows.Switch
+        value: "{{ vars.gevonden}}"
+        cases: 
+          OVERLEDEN:
+            - id: overleden
+              type: io.kestra.core.tasks.log.Log
+              message: Overleden
+          GEBLOKKEERD:
+            - id: geblokkeerd
+              type: io.kestra.core.tasks.log.Log
+              message: Geblokkeerd
+          MINISTERIEEL_BESLUIT:
+            - id: ministerieel_besluit
+              type: io.kestra.core.tasks.log.Log
+              message: Ministerieel Besluit
+          GEËMIGREERD:
+            - id: geëmigreerd
+              type: io.kestra.core.tasks.log.Log
+              message: Geëmigreerd
+        defaults:
+          - id: actueel
+            type: io.kestra.core.tasks.log.Log
+            message: Actueel

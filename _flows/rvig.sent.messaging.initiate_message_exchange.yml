@@ -1,0 +1,40 @@
+id: initiate_message_exchange
+namespace: rvig.sent.messaging
+
+variables:
+  host: host.docker.internal
+
+inputs:
+  - name: context
+    type: STRING
+    defaults: bijhouden
+    required: true
+  - name: instantie_van
+    type: STRING
+    defaults: "1810"
+    required: false
+  - name: instantie_naar
+    type: STRING
+    defaults: "1811"
+    required: false
+
+tasks:
+  - id: start
+    type: io.kestra.core.tasks.log.Log
+    message: Start initiatie berichtencyclus
+  - id: declare_exchange
+    type: io.kestra.plugin.amqp.DeclareExchange
+    url: amqp://guest:guest@{{vars.host}}:5672/{{inputs.context}}
+    name: kestramqp.exchange.{{inputs.context}}
+  - id: create_queue
+    type: io.kestra.plugin.amqp.CreateQueue
+    url: amqp://guest:guest@{{vars.host}}:5672/{{inputs.context}}
+    name: kestramqp.queue.{{inputs.context}}.{{inputs.instantie_naar}}
+  - id: queue_bind
+    type: io.kestra.plugin.amqp.QueueBind
+    url: amqp://guest:guest@{{vars.host}}:5672/{{inputs.context}}
+    exchange: kestramqp.exchange.{{inputs.context}}
+    queue: kestramqp.queue.{{inputs.context}}.{{inputs.instantie_naar}}
+  - id: einde
+    type: io.kestra.core.tasks.log.Log
+    message: Einde initiatie berichtencyclus
