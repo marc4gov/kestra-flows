@@ -4,17 +4,3 @@ tasks:
   - id: hello
     type: io.kestra.plugin.scripts.python.Script
     script: "{{ read('scripts/hello.py') }}"
-  - id: send_message
-    type: io.kestra.core.tasks.flows.Subflow
-    namespace: rvig.sent
-    flowId: queueing
-    inputs:
-      PLnummer: "002"
-      bericht: Lg01
-      vhost: afnemen
-  - id: receive_message
-    type: io.kestra.core.tasks.flows.Subflow
-    namespace: rvig.sent
-    flowId: haal_bericht_op
-    inputs:
-      vhost: afnemen
