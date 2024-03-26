@@ -3,6 +3,7 @@ namespace: rvig.sent.bijhouden
 
 variables:
   host: host.docker.internal
+  antwoord: NIET_UNIEK
 
 inputs:
   - id: context
@@ -67,9 +68,10 @@ tasks:
           - id: check_bestand
             type: io.kestra.core.tasks.log.Log
             message: Resultaat is {{outputs.doe_bestandscontrole.body | jq('.bericht') | first }}
-      - id: check_bericht
-        type: io.kestra.core.tasks.log.Log
-        message: Dit is een {{ outputs.stuur_Ii01_bericht.body | jq('.bericht') | first }} bericht
+      # - id: check_bericht
+      #   type: io.kestra.core.tasks.log.Log
+      #   message: Dit is een {{ outputs.haal_pl_op.body | jq('.bericht') | first }} bericht
+        
   - id: stuur_antwoord
     type: io.kestra.core.tasks.flows.Switch
     value: "{{ vars.antwoord}}"
