@@ -5,23 +5,23 @@ variables:
   host: host.docker.internal
 
 inputs:
-  - name: context
+  - id: context
     type: STRING
     defaults: bijhouden
     required: true
-  - name: bericht
+  - id: bericht
     type: STRING
     defaults: Ii01
     required: true    
-  - name: PLnummer
+  - id: PLnummer
     type: STRING
     defaults: "001"
     required: true
-  - name: instantie_van
+  - id: instantie_van
     type: STRING
     defaults: "1810"
     required: false
-  - name: instantie_naar
+  - id: instantie_naar
     type: STRING
     defaults: "1811"
     required: false
@@ -31,6 +31,10 @@ tasks:
     type: io.kestra.core.tasks.log.Log
     message: Initieer Ii01 bericht
    
+  - id: maak_bericht
+    type: io.kestra.core.tasks.debugs.Return
+    format: "{{task.id}} > {{taskrun.startDate}}"
+    
   - id: initiate_and_send_message
     type: io.kestra.core.tasks.flows.Subflow
     namespace: rvig.sent.messaging
@@ -45,7 +49,7 @@ tasks:
   - id: stuur_pl
     type: io.kestra.core.tasks.flows.Parallel
     tasks:
-      - id: controeer_pl
+      - id: controleer_pl
         type: io.kestra.core.tasks.flows.Sequential
         tasks:
           - id: haal_pl_op
