@@ -5,15 +5,15 @@ variables:
   host: host.docker.internal
 
 inputs:
-  - name: instantie_van
+  - id: instantie_van
     type: STRING
     defaults: "1810"
     required: true
-  - name: instantie_naar
+  - id: instantie_naar
     type: STRING
     defaults: "1811"
     required: true
-  - name: bericht
+  - id: bericht
     type: JSON
     defaults: '{"PLnummer": "001", "context": "bijhouden", "code": "Ii01"}'
     required: false
