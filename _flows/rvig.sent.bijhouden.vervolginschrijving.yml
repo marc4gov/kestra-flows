@@ -43,7 +43,7 @@ tasks:
       instantie_van: '{{ inputs.instantie_van}}'
       instantie_naar: '{{ inputs.instantie_naar}}'
       PLnummer: '{{ inputs.PLnummer}}'
-      context: '{{ inputs.context }}'
+      # context: '{{ inputs.context }}'
       bericht: '{{ outputs.maak_bericht}}'
 
   - id: stuur_pl
