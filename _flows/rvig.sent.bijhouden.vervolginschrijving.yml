@@ -33,7 +33,7 @@ tasks:
    
   - id: maak_bericht
     type: io.kestra.core.tasks.debugs.Return
-    format: '{"PLnummer": "001", "context": "bijhouden", "code": "Ii01"}'
+    format: '{"PLnummer": "002", "context": "bijhouden", "code": "Ii01"}'
     
   - id: initiate_and_send_message
     type: io.kestra.core.tasks.flows.Subflow
