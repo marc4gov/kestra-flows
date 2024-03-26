@@ -44,7 +44,7 @@ tasks:
       instantie_naar: '{{ inputs.instantie_naar}}'
       # PLnummer: '{{ inputs.PLnummer}}'
       # context: '{{ inputs.context }}'
-      bericht: '{{ outputs.maak_bericht}}'
+      bericht: '{{ outputs.maak_bericht.value}}'
 
   - id: stuur_pl
     type: io.kestra.core.tasks.flows.Parallel
