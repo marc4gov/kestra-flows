@@ -17,4 +17,4 @@ tasks:
 triggers:
   - id: schedule_push
     type: io.kestra.core.models.triggers.types.Schedule
-    cron: "*/15 * * * *"
+    cron: "*/30 * * * *"
