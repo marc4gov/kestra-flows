@@ -19,6 +19,10 @@ inputs:
     required: false
 
 tasks:
+  - id: log_inputs
+    type: io.kestra.core.tasks.log.Log
+    message: '{{inputs.bericht}}'
+
   - id: initiate_message_exchange
     type: io.kestra.core.tasks.flows.Subflow
     namespace: rvig.sent.messaging
