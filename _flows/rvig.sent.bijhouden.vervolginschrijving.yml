@@ -3,7 +3,8 @@ namespace: rvig.sent.bijhouden
 
 variables:
   host: host.docker.internal
-  antwoord: NIET_UNIEK
+  antwoord: GEBLOKKEERD
+  gevonden: GEBLOKKEERD
 
 inputs:
   - id: context
