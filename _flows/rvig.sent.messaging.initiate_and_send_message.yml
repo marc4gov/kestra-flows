@@ -15,16 +15,19 @@ inputs:
     required: true
   - id: bericht
     type: JSON
-    defaults: '{"PLnummer": "001", "context": "bijhouden", "code": "Ii01"}'
+    defaults: 
+      { PLnummer: "001",
+      context: "bijhouden",
+      code: "Ii01"}
     required: false
 
 tasks:
   - id: log_inputs
-    type: io.kestra.core.tasks.log.Log
+    type: io.kestra.plugin.core.log.Log
     message: '{{inputs.bericht}}'
 
   - id: initiate_message_exchange
-    type: io.kestra.core.tasks.flows.Subflow
+    type: io.kestra.plugin.core.flow.Subflow
     namespace: rvig.sent.messaging
     flowId: initiate_message_exchange
     inputs:
@@ -32,7 +35,7 @@ tasks:
       instantie_naar: '{{ inputs.instantie_naar}}'
       context: '{{ inputs.bericht.context }}'
   - id: send_message
-    type: io.kestra.core.tasks.flows.Subflow
+    type: io.kestra.plugin.core.flow.Subflow
     namespace: rvig.sent.messaging
     flowId: send_message
     inputs:

@@ -5,18 +5,18 @@ variables:
   host: rabbitmq
 
 inputs:
-  - name: context
+  - id: context
     type: STRING
     defaults: bijhouden
     required: true
-  - name: instantie_naar
+  - id: instantie_naar
     type: STRING
     defaults: "1811"
     required: false
 
 tasks:
   - id: start
-    type: io.kestra.core.tasks.log.Log
+    type: io.kestra.plugin.core.log.Log
     message: Start taak haal bericht op
   - id: haal_bericht
     type: io.kestra.plugin.amqp.Consume
@@ -25,12 +25,12 @@ tasks:
     serdeType: JSON
     maxRecords: 1
   - id: vertaal_json
-    type: io.kestra.plugin.serdes.json.JsonWriter
+    type: io.kestra.plugin.serdes.json.IonToJson
     newLine: true
     from: "{{ outputs.haal_bericht.uri }}"
   - id: log_bericht
-    type: io.kestra.core.tasks.log.Log
+    type: io.kestra.plugin.core.log.Log
     message: Dit is het bericht {{ read(outputs.vertaal_json.uri) | jq('.data') | first}}
   - id: einde
-    type: io.kestra.core.tasks.log.Log
+    type: io.kestra.plugin.core.log.Log
     message: Einde taak haal bericht op

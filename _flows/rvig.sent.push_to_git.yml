@@ -11,10 +11,10 @@ tasks:
     url: https://github.com/marc4gov/kestra-flows
     branch: master
     username: marc4gov
-    password: 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
+    password: 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
     commitMessage: "add flows and scripts {{ now() }}"
 
 triggers:
   - id: schedule_push
-    type: io.kestra.core.models.triggers.types.Schedule
+    type: io.kestra.plugin.core.trigger.Schedule
     cron: "*/30 * * * *"

@@ -5,22 +5,22 @@ variables:
   host: rabbitmq
 
 inputs:
-  - name: context
+  - id: context
     type: STRING
     defaults: bijhouden
     required: true
-  - name: instantie_van
+  - id: instantie_van
     type: STRING
     defaults: "1810"
     required: false
-  - name: instantie_naar
+  - id: instantie_naar
     type: STRING
     defaults: "1811"
     required: false
 
 tasks:
   - id: start
-    type: io.kestra.core.tasks.log.Log
+    type: io.kestra.plugin.core.log.Log
     message: Start initiatie berichtencyclus
   - id: declare_exchange
     type: io.kestra.plugin.amqp.DeclareExchange
@@ -36,5 +36,5 @@ tasks:
     exchange: kestramqp.exchange.{{inputs.context}}
     queue: kestramqp.queue.{{inputs.context}}.{{inputs.instantie_naar}}
   - id: einde
-    type: io.kestra.core.tasks.log.Log
+    type: io.kestra.plugin.core.log.Log
     message: Einde initiatie berichtencyclus
