@@ -2,7 +2,7 @@ id: initiate_pulsar
 namespace: rvig.sent.messaging
 
 variables:
-  host: rabbitmq
+  host: localhost
 
 inputs:
 
@@ -22,7 +22,7 @@ tasks:
 
   - id: "fileTransform"
     type: "io.kestra.plugin.scripts.nashorn.FileTransform"
-    from: '[{\"name":\"jane\"}, {\"name\":\"richard\"}]'
+    from: '[{"name":"jane"}, {"name":"richard"}]'
     script: |
       logger.info('row: {}', row)
 
@@ -34,12 +34,12 @@ tasks:
   - id: pulsar_produce
     type: io.kestra.plugin.pulsar.Produce
     from: "{{ outputs.fileTransform.uri }}"    
-    uri: pulsar://localhost:6650
+    uri: pulsar://{{vars.host}}:6650
     serializer: JSON
     topic: test_kestra
   - id: pulsar_consume
     type: io.kestra.plugin.pulsar.Consume
-    uri: pulsar://localhost:6650
+    uri: pulsar://{{vars.host}}:6650
     topic: test_kestra
     deserializer: JSON
     subscriptionName: kestra_flow
