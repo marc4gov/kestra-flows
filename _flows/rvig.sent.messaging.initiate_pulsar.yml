@@ -1,0 +1,49 @@
+id: initiate_pulsar
+namespace: rvig.sent.messaging
+
+variables:
+  host: rabbitmq
+
+inputs:
+
+  - id: instantie_van
+    type: STRING
+    defaults: "1810"
+    required: false
+  - id: instantie_naar
+    type: STRING
+    defaults: "1811"
+    required: false
+
+tasks:
+  - id: start
+    type: io.kestra.plugin.core.log.Log
+    message: Start initiatie Pulsar bericht
+
+  - id: "fileTransform"
+    type: "io.kestra.plugin.scripts.nashorn.FileTransform"
+    from: '[{\"name":\"jane\"}, {\"name\":\"richard\"}]'
+    script: |
+      logger.info('row: {}', row)
+
+      if (row['name'] === 'richard') {
+        row = null
+      } else {
+        row['email'] = row['name'] + '@kestra.io'
+      }
+  - id: pulsar_produce
+    type: io.kestra.plugin.pulsar.Produce
+    from: "{{ outputs.fileTransform.uri }}"    
+    uri: pulsar://localhost:6650
+    serializer: JSON
+    topic: test_kestra
+  - id: pulsar_consume
+    type: io.kestra.plugin.pulsar.Consume
+    uri: pulsar://localhost:6650
+    topic: test_kestra
+    deserializer: JSON
+    subscriptionName: kestra_flow
+
+  - id: einde
+    type: io.kestra.plugin.core.log.Log
+    message: Einde initiatie Pulsar bericht
