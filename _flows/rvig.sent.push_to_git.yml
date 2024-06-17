@@ -11,7 +11,7 @@ tasks:
     url: https://github.com/marc4gov/kestra-flows
     branch: master
     username: marc4gov
-    password: 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
+    password: "{{ secret('GITHUB_ACCESS_TOKEN') }}"
     commitMessage: "add flows and scripts {{ now() }}"
 
 triggers:
