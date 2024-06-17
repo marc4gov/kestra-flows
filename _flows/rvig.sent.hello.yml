@@ -1,6 +1,0 @@
-id: hello
-namespace: rvig.sent
-tasks:
-  - id: hello
-    type: io.kestra.plugin.scripts.python.Script
-    script: "{{ read('scripts/hello.py') }}"
