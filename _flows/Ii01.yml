@@ -1,0 +1,108 @@
+id: Ii01
+namespace: rvig.lo
+description: Initieer een Ii01 bericht
+
+labels:
+  env: dev
+  project: test
+
+inputs:
+  - id: bericht
+    type: JSON
+    defaults: |-
+      {
+        "01": {"01": {"10": "A-nummer"}}, 
+        "01": {"01": {"10": "Burgerservicenummer"}}, 
+        "01": {"02": {"40": "Geslachtsnaam"}},
+        "08": {"11": {"60": "Postcode"}}
+      }
+
+  - id: uniek
+    type: ENUM
+    defaults: UNIEK
+    values:
+      - NIET_UNIEK
+      - NIET_AANWEZIG
+      - UNIEK
+
+  - id: actueel
+    type: ENUM
+    defaults: ACTUEEL
+    values:
+      - OVERLEDEN
+      - GEBLOKKEERD
+      - MINISTERIEEL_BESLUIT
+      - GEËMIGREERD
+      - ACTUEEL
+
+
+tasks:
+  - id: initieer_berichtenstroom
+    type: io.kestra.plugin.core.log.Log
+    message: Initieer Ii01 bericht
+  - id: stuur_Ii01_bericht
+    type: io.kestra.plugin.core.http.Request
+    uri: https://marc4gov.pythonanywhere.com/initiatie/Ii01
+  - id: stuur_pl
+    type: io.kestra.plugin.core.flow.Parallel
+    tasks:
+      - id: controleer_pl
+        type: io.kestra.plugin.core.flow.Sequential
+        tasks:
+          - id: haal_pl_op
+            type: io.kestra.plugin.core.flow.Subflow
+            namespace: rvig.test.berichten
+            flowId: haal_pl_op
+            inputs:
+              mongo_url_endpoint: "{{ secret('MONGO_URL_ENDPOINT') }}"
+              data_source: ClusterSenT
+              database: berichten
+              collection: brpv.mut
+            wait: true
+          - id: doe_bestandscontrole
+            type: io.kestra.plugin.core.http.Request
+            uri: https://marc4gov.pythonanywhere.com/initiatie/controle_ok
+          - id: check_bestand
+            type: io.kestra.plugin.core.log.Log
+            message: Resultaat is {{outputs.doe_bestandscontrole.body | jq('.bericht') | first }}
+      - id: check_bericht
+        type: io.kestra.plugin.core.log.Log
+        message: Dit is een {{ outputs.stuur_Ii01_bericht.body | jq('.bericht') | first }} bericht
+
+  - id: stuur_antwoord
+    type: io.kestra.plugin.core.flow.Switch
+    value: "{{ inputs.uniek }}"
+    cases: 
+      NIET_UNIEK:
+        - id: niet_uniek
+          type: io.kestra.plugin.core.log.Log
+          message: Niet uniek
+      NIET_AANWEZIG:
+        - id: niet_aanwezig
+          type: io.kestra.plugin.core.log.Log
+          message: Niet aanwezig
+    defaults:
+      - id: gevonden
+        type: io.kestra.plugin.core.flow.Switch
+        value: "{{ inputs.actueel }}"
+        cases: 
+          OVERLEDEN:
+            - id: overleden
+              type: io.kestra.plugin.core.log.Log
+              message: Overleden
+          GEBLOKKEERD:
+            - id: geblokkeerd
+              type: io.kestra.plugin.core.log.Log
+              message: Geblokkeerd
+          MINISTERIEEL_BESLUIT:
+            - id: ministerieel_besluit
+              type: io.kestra.plugin.core.log.Log
+              message: Ministerieel Besluit
+          GEËMIGREERD:
+            - id: geëmigreerd
+              type: io.kestra.plugin.core.log.Log
+              message: Geëmigreerd
+        defaults:
+          - id: actueel
+            type: io.kestra.plugin.core.log.Log
+            message: Actueel
