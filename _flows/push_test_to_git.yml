@@ -1,11 +1,9 @@
-id: push_lo_to_git
-namespace: rvig.lo
+id: push_test_to_git
+namespace: null
 
 tasks:
   - id: commit_and_push
     type: io.kestra.plugin.git.PushFlows
-    sourceNamespace: rvig.lo # the namespace from which flows are pushed
-    targetNamespace: rvig.lo # the target production namespace; if different than sourceNamespace, the sourceNamespace in the source code will be overwritten by the targetNamespace
     flows: "*"  # optional list of glob patterns; by default, all flows are pushed
     includeChildNamespaces: true # optional boolean, false by default
     gitDirectory: _flows

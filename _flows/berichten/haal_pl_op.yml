@@ -1,0 +1,50 @@
+id: haal_pl_op
+namespace: null.berichten
+description: Haal een PL op uit de database
+
+labels:
+  env: dev
+  project: test
+
+inputs:
+  - id: payload
+    type: JSON
+    defaults: |-
+      [{"name": "kestra", "rating": "best in class"}]
+  - id: mongo_url_endpoint
+    type: STRING
+    defaults: https://eu-central-1.aws.data.mongodb-api.com/app/data-rtjmr/endpoint/data/v1
+  - id: data_source
+    type: STRING
+    defaults: "ClusterSenT"
+  - id: database
+    type: STRING
+    defaults: "berichten"
+  - id: collection
+    type: STRING
+    defaults: "brpv.mut"
+  - id: filter
+    type: JSON
+    defaults: '{"T01_Lg01_001": {"$exists": true}}'
+
+tasks:
+  - id: start
+    type: io.kestra.plugin.core.log.Log
+    message: Mongo URL {{ inputs.mongo_url_endpoint  }}
+  - id: get_data
+    type: io.kestra.plugin.core.http.Request
+    uri: "{{ inputs.mongo_url_endpoint }}/action/find"
+    method: POST
+    headers:
+      api-key: "{{ secret('MONGO_API_KEY') }}"
+      contentType: application/json
+    body: '{
+      "dataSource": "{{ inputs.data_source }}", 
+      "database": "{{ inputs.database }}", 
+      "collection": "{{ inputs.collection }}",
+      "filter": {{ inputs.filter }}
+      }'
+
+  - id: end_status
+    type: io.kestra.plugin.core.log.Log
+    message: Bericht {{ outputs.get_data.body | jq('.documents[0]') }}
